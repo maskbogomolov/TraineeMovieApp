@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">TraineTestForSurf</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="searchText">Поиск по названию фильма</string>
+    <string name="titleText">Бегущий по лезвию 2049</string>
+    <string name="errorTxt">Нам не удалось обработать ваш запрос. Попробуйте еще раз</string>
+    <string name="emptyResponse">По запросу ничего не найдено</string>
+    <string name="emptyResult">По запросу \"%1$s\" ничего не найдено</string>
+</resources>
