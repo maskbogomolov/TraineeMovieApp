@@ -1,6 +1,7 @@
 package com.example.trainetestforsurf.di
 
 
+import com.example.trainetestforsurf.data.movies.core.MoviesHttpClient
 import com.example.trainetestforsurf.data.movies.remote.MoviesApi
 import dagger.Module
 import dagger.Provides
@@ -12,9 +13,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
 
+
     @Provides
     @Singleton
-    fun provideMovies() : MoviesApi{
-        return MoviesApi.create()
+    fun provideMovies(client : MoviesHttpClient) : MoviesApi{
+        return client.api
     }
 }

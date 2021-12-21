@@ -4,6 +4,8 @@ import com.example.trainetestforsurf.data.movies.MoviesRemoteDataSource
 import com.example.trainetestforsurf.data.movies.MoviesRemoteDataSourceImpl
 import com.example.trainetestforsurf.data.movies.MoviesRepository
 import com.example.trainetestforsurf.data.movies.MoviesRepositoryImpl
+import com.example.trainetestforsurf.data.movies.core.MoviesHttpClient
+import com.example.trainetestforsurf.data.movies.core.MoviesHttpClientImpl
 
 import dagger.Binds
 import dagger.Module
@@ -24,4 +26,9 @@ interface BindMoviesModule {
     fun bindMoviesRepository(
         impl : MoviesRepositoryImpl
     ) : MoviesRepository
+
+    @Binds
+    fun moviesHttpClient(
+        impl: MoviesHttpClientImpl,
+    ) : MoviesHttpClient
 }
