@@ -20,6 +20,9 @@ import com.example.trainetestforsurf.presentation.adapter.MoviesAdapter
 import com.example.trainetestforsurf.presentation.viewmodel.MoviesResult
 import com.example.trainetestforsurf.presentation.viewmodel.MoviesViewModel
 import com.example.trainetestforsurf.util.NetworkResult
+import com.example.trainetestforsurf.util.afterTextChanged
+import com.example.trainetestforsurf.util.toInvisible
+import com.example.trainetestforsurf.util.toVisible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
@@ -34,7 +37,7 @@ class MovieFragment : Fragment() {
     private val binding get() = _binding!!
     private val adapter : MoviesAdapter by lazy {
         MoviesAdapter(requireActivity(),
-        {movie -> viewModel.save(movie)},
+        {movie -> viewModel.saveMovie(movie)},
         viewModel)}
 
     override fun onCreateView(
@@ -91,7 +94,7 @@ class MovieFragment : Fragment() {
                 hideHorizontalProgressBar()
             }
             is MoviesResult.Loading ->{
-                binding.progressBarHorizontal.visibility = View.VISIBLE
+                binding.progressBarHorizontal.toVisible()
                 showHorizontalProgressBar()
             }
             is MoviesResult.EmptyResult ->{
@@ -107,60 +110,48 @@ class MovieFragment : Fragment() {
     }
 
     private fun hideProgressBar(){
-        binding.progressBar.visibility = View.INVISIBLE
-        binding.progressBarHorizontal.visibility = View.GONE
+        binding.progressBar.toInvisible()
+        binding.progressBarHorizontal.toInvisible()
     }
 
     private fun showHorizontalProgressBar(){
-        binding.progressBarHorizontal.visibility = View.VISIBLE
+        binding.progressBarHorizontal.toVisible()
     }
     private fun hideHorizontalProgressBar(){
-        binding.progressBarHorizontal.visibility = View.INVISIBLE
+        binding.progressBarHorizontal.toInvisible()
     }
     private fun showEmptyResponse(){
         adapter.submitList(emptyList())
-        binding.recyclerview.visibility = View.GONE
-        binding.emptyResponseImg.visibility = View.VISIBLE
-        binding.emptyResponseTxt.visibility = View.VISIBLE
+        binding.recyclerview.toVisible()
+        binding.emptyResponseImg.toVisible()
+        binding.emptyResponseTxt.toVisible()
     }
     private fun hideEmptyResponse(){
-        binding.recyclerview.visibility = View.VISIBLE
-        binding.emptyResponseImg.visibility = View.INVISIBLE
-        binding.emptyResponseTxt.visibility = View.INVISIBLE
+        binding.recyclerview.toVisible()
+        binding.emptyResponseImg.toInvisible()
+        binding.emptyResponseTxt.toInvisible()
 
     }
     private fun showErrorResponse(){
         adapter.submitList(emptyList())
-        binding.recyclerview.visibility = View.GONE
-        binding.errorImg.visibility = View.VISIBLE
-        binding.errorTxt.visibility = View.VISIBLE
-        binding.refreshImg.visibility = View.VISIBLE
+        binding.recyclerview.toInvisible()
+        binding.errorImg.toVisible()
+        binding.errorTxt.toVisible()
+        binding.refreshImg.toVisible()
     }
     private fun hideErrorResponse(){
-        binding.recyclerview.visibility = View.VISIBLE
-        binding.errorImg.visibility = View.INVISIBLE
-        binding.errorTxt.visibility = View.INVISIBLE
-        binding.refreshImg.visibility = View.INVISIBLE
+        binding.recyclerview.toVisible()
+        binding.errorImg.toInvisible()
+        binding.errorTxt.toInvisible()
+        binding.refreshImg.toInvisible()
 
     }
-    fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-        this.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                // do nothing
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                // do nothing
-            }
-
-            override fun afterTextChanged(editable: Editable?) {
-                afterTextChanged.invoke(editable.toString())
-            }
-        })
-    }
-
     private fun refreshData() {
         viewModel.loadListMovie()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }

@@ -13,13 +13,11 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 
-
-
 @HiltViewModel
 class MoviesViewModel @Inject constructor(
-    private val repository : MoviesRepository,
+    private val repository: MoviesRepository,
     private val sharedPreferences: SharedPreferences
-) : ViewModel(){
+) : ViewModel() {
 
     private val queryFlow = MutableStateFlow("")
     private val _searchMovie = MutableStateFlow<MoviesResult>(MoviesResult.EmptyQuery)
@@ -46,28 +44,32 @@ class MoviesViewModel @Inject constructor(
     }
 
     fun loadListMovie() = viewModelScope.launch {
-        //_listMovie.value = MoviesResult.Loading
         handleListMovie()
     }
-     suspend fun handleQuery(query : String) : MoviesResult {
-        return if (query.isEmpty()){
+
+    suspend fun handleQuery(query: String): MoviesResult {
+        return if (query.isEmpty()) {
             MoviesResult.EmptyQuery
-        }else{
+        } else {
             handleSearchMovie(query)
         }
     }
-    private suspend fun handleSearchMovie(query: String) : MoviesResult {
-        return when(val movieResult = repository.searchMovies(query)){
+
+    private suspend fun handleSearchMovie(query: String): MoviesResult {
+        return when (val movieResult = repository.searchMovies(query)) {
             is NetworkResult.Error -> {
                 MoviesResult.ErrorSearchResult(query)
             }
             is NetworkResult.Success -> {
-                if (movieResult.data.isEmpty()) MoviesResult.EmptyResult(query) else MoviesResult.SuccessSearchResult(movieResult.data)
+                if (movieResult.data.isEmpty()) MoviesResult.EmptyResult(query) else MoviesResult.SuccessSearchResult(
+                    movieResult.data
+                )
             }
         }
     }
+
     private suspend fun handleListMovie() {
-        return when(val movieResult = repository.getMovies()){
+        return when (val movieResult = repository.getMovies()) {
             is NetworkResult.Error -> _listMovie.value =
                 MoviesResult.ErrorResult(IllegalArgumentException("Search movies from server error!"))
             is NetworkResult.Success -> {
@@ -77,10 +79,15 @@ class MoviesViewModel @Inject constructor(
 
     }
 
-    fun save(movies: Movies){
-        sharedPreferences.setFavorites(movies.image,movies.isFavorite)
+    fun saveMovie(movies: Movies) {
+        viewModelScope.launch {
+            sharedPreferences.setFavorites(movies.id.toString(), movies.isFavorite)
+        }
     }
-     fun isMovieFavourite(movies : Movies){
-        movies.isFavorite = sharedPreferences.isMovieFavourite(movies.image)
+
+    fun isMovieFavourite(movies: Movies) {
+        viewModelScope.launch {
+            movies.isFavorite = sharedPreferences.isMovieFavourite(movies.id.toString())
+        }
     }
 }
