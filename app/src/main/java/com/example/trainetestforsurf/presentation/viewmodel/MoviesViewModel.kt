@@ -21,11 +21,11 @@ class MoviesViewModel @Inject constructor(
 
     private val queryFlow = MutableStateFlow("")
     private val _searchMovie = MutableStateFlow<MoviesResult>(MoviesResult.EmptyQuery)
-    val searchMovie : LiveData<MoviesResult>
+    val searchMovie: LiveData<MoviesResult>
         get() = _searchMovie.asLiveData(viewModelScope.coroutineContext)
 
     private val _listMovie = MutableLiveData<MoviesResult>()
-    val listMovie : LiveData<MoviesResult>
+    val listMovie: LiveData<MoviesResult>
         get() = _listMovie
 
     init {
@@ -81,13 +81,13 @@ class MoviesViewModel @Inject constructor(
 
     fun saveMovie(movies: Movies) {
         viewModelScope.launch {
-            sharedPreferences.setFavorites(movies.id.toString(), movies.isFavorite)
+            repository.saveMovie(movies)
         }
     }
 
     fun isMovieFavourite(movies: Movies) {
         viewModelScope.launch {
-            movies.isFavorite = sharedPreferences.isMovieFavourite(movies.id.toString())
+            movies.isFavorite = repository.isMovieFavourite(movies)
         }
     }
 }
